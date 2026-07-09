@@ -1,23 +1,6 @@
 """
 Module 03: Layers - Core Functionality Tests
 =============================================
-
-These tests verify that Layer abstractions work correctly.
-
-WHY LAYERS MATTER:
------------------
-Layers are the building blocks of neural networks:
-- Linear (Dense): y = Wx + b
-- Conv2d: sliding window feature detection
-- RNN/LSTM: sequence processing
-
-Every architecture (ResNet, GPT, BERT) is just layers + connections.
-
-WHAT STUDENTS LEARN:
--------------------
-1. The Layer interface (forward, parameters, etc.)
-2. How to compose layers into networks
-3. Parameter management for training
 """
 
 import numpy as np
@@ -28,27 +11,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from tinytorch.core.layers import Layer
-from tinytorch.core.tensor import Tensor
+from tinytorch.foundation.layers import Layer
+from tinytorch.foundation.tensor import Tensor
 
 
 class TestLayerBaseClass:
     """
     Test the Layer base class.
-
-    CONCEPT: Layer is an abstract class that all layers inherit from.
-    It defines the interface that makes layers composable.
     """
 
     def test_layer_creation(self):
         """
         WHAT: Verify Layer base class can be instantiated.
-
-        WHY: Layer is the foundation - if it doesn't exist,
-        no neural network layers can be built.
-
-        STUDENT LEARNING: All layers (Linear, Conv2d, etc.) inherit
-        from this base class. It defines the common interface.
         """
         layer = Layer()
         assert layer is not None
@@ -56,12 +30,6 @@ class TestLayerBaseClass:
     def test_layer_interface(self):
         """
         WHAT: Verify Layer has the required interface.
-
-        WHY: All layers must be callable (layer(x)) and have forward().
-        This consistency enables layer composition.
-
-        STUDENT LEARNING: The __call__ method typically calls forward().
-        This pattern allows layers to be used like functions.
         """
         layer = Layer()
 
@@ -78,13 +46,6 @@ class TestLayerBaseClass:
     def test_layer_inheritance(self):
         """
         WHAT: Verify custom layers can inherit from Layer.
-
-        WHY: Students need to create custom layers for specific tasks.
-
-        STUDENT LEARNING: To create a custom layer:
-        1. Inherit from Layer
-        2. Override forward() method
-        3. Optionally store parameters as Tensors
         """
         class IdentityLayer(Layer):
             """A layer that returns its input unchanged."""
@@ -104,20 +65,11 @@ class TestLayerBaseClass:
 class TestParameterManagement:
     """
     Test how layers manage learnable parameters.
-
-    CONCEPT: Parameters (weights, biases) are what we train.
-    They must be tracked so optimizers can update them.
     """
 
     def test_layer_with_parameters(self):
         """
         WHAT: Verify layers can store trainable parameters.
-
-        WHY: Neural networks learn by adjusting parameters.
-        Layers must store them as Tensor attributes.
-
-        STUDENT LEARNING: Parameters are Tensors with requires_grad=True.
-        The optimizer finds them via layer.parameters().
         """
         class ParameterLayer(Layer):
             def __init__(self, input_size, output_size):
@@ -138,15 +90,6 @@ class TestParameterManagement:
     def test_parameter_initialization(self):
         """
         WHAT: Verify weights are initialized properly.
-
-        WHY: Bad initialization causes:
-        - Vanishing gradients (too small)
-        - Exploding gradients (too large)
-        - Dead neurons (all same value)
-
-        STUDENT LEARNING: Xavier/Glorot initialization:
-        weights ~ Uniform(-sqrt(6/(in+out)), sqrt(6/(in+out)))
-        This keeps activations and gradients stable.
         """
         class XavierLayer(Layer):
             def __init__(self, size):
@@ -169,14 +112,6 @@ class TestParameterManagement:
     def test_parameter_shapes(self):
         """
         WHAT: Verify parameter shapes match layer configuration.
-
-        WHY: Shape mismatches cause runtime errors.
-        Linear(128, 64) must have weights of shape (128, 64).
-
-        STUDENT LEARNING: For Linear(in_features, out_features):
-        - weights: (in_features, out_features)
-        - bias: (out_features,)
-        - output: (batch, out_features)
         """
         class LinearLayer(Layer):
             def __init__(self, in_features, out_features):
@@ -211,21 +146,11 @@ class TestParameterManagement:
 class TestLinearTransformations:
     """
     Test linear transformation layers (y = Wx + b).
-
-    CONCEPT: Linear layers are the most fundamental building block.
-    Every MLP, transformer, and most networks use them.
     """
 
     def test_matrix_multiplication_layer(self):
         """
         WHAT: Verify matrix multiplication works correctly.
-
-        WHY: Matrix multiply (x @ W) is the core of linear layers.
-        If this fails, no neural network can work.
-
-        STUDENT LEARNING: For input x of shape (batch, in_features):
-        output = x @ weights  # (batch, in_features) @ (in_features, out_features)
-        result shape = (batch, out_features)
         """
         class MatMulLayer(Layer):
             def __init__(self, weight_matrix):
@@ -252,13 +177,6 @@ class TestLinearTransformations:
     def test_affine_transformation(self):
         """
         WHAT: Verify affine transformation y = Wx + b.
-
-        WHY: This is what Linear layers do.
-        W scales and rotates, b shifts (bias).
-
-        STUDENT LEARNING: Bias allows the line/plane to not pass
-        through the origin. Without bias, y = Wx always gives 0
-        when x = 0.
         """
         class AffineLayer(Layer):
             def __init__(self, weights, bias):
@@ -287,12 +205,6 @@ class TestLinearTransformations:
     def test_batch_processing(self):
         """
         WHAT: Verify layer processes batches correctly.
-
-        WHY: Training uses batches for efficiency.
-        Each sample in the batch is processed independently.
-
-        STUDENT LEARNING: Batch dimension is always first.
-        (batch_size, features) @ (features, output) = (batch_size, output)
         """
         class ScaleLayer(Layer):
             def __init__(self):
@@ -320,20 +232,11 @@ class TestLinearTransformations:
 class TestLayerComposition:
     """
     Test composing multiple layers into networks.
-
-    CONCEPT: Neural networks are compositions of layers.
-    x → Layer1 → Layer2 → ... → output
     """
 
     def test_layer_chaining(self):
         """
         WHAT: Verify layers can be chained together.
-
-        WHY: Networks are just chained layers.
-        The output of one is the input to the next.
-
-        STUDENT LEARNING: Forward pass flows data through layers:
-        x → (scale by 2) → (add 10) → output
         """
         class ScaleLayer(Layer):
             def __init__(self, scale):
@@ -366,12 +269,6 @@ class TestLayerComposition:
     def test_sequential_layer_composition(self):
         """
         WHAT: Verify Sequential container works.
-
-        WHY: Sequential is a convenience wrapper that
-        automatically chains layers: Sequential([l1, l2, l3])
-
-        STUDENT LEARNING: Sequential is like a list of layers.
-        forward() runs each layer in order on the input.
         """
         class Sequential(Layer):
             def __init__(self, layers):
@@ -410,25 +307,11 @@ class TestLayerComposition:
 class TestLayerUtilities:
     """
     Test utility functions for layers.
-
-    CONCEPT: Understanding layers requires utilities:
-    - Parameter count (model complexity)
-    - Output shape inference (debugging)
     """
 
     def test_layer_parameter_count(self):
         """
         WHAT: Verify we can count layer parameters.
-
-        WHY: Parameter count tells you:
-        - Model memory usage
-        - Risk of overfitting (more params = more risk)
-        - Computational cost
-
-        STUDENT LEARNING: Linear(in, out) has:
-        - in * out weights
-        - out biases
-        - Total: in * out + out parameters
         """
         class CountableLayer(Layer):
             def __init__(self, in_features, out_features):
@@ -455,14 +338,6 @@ class TestLayerUtilities:
     def test_layer_output_shape_inference(self):
         """
         WHAT: Verify we can predict output shape.
-
-        WHY: Shape inference helps:
-        - Debug shape mismatches
-        - Plan architecture without running data
-        - Validate connections between layers
-
-        STUDENT LEARNING: For most layers:
-        output_shape = (input_batch, layer_output_features)
         """
         class ShapeInferenceLayer(Layer):
             def __init__(self, out_features):
