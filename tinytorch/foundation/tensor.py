@@ -1,9 +1,12 @@
+__all__ = ["rng", "BYTES_PER_FLOAT32", "KB_TO_BYTES", "MB_TO_BYTES", "Tensor"]
 
-
-__all__ = ['rng', 'BYTES_PER_FLOAT32', 'KB_TO_BYTES', 'MB_TO_BYTES', 'Tensor']
-
-# %% ../../modules/01_tensor/tensor.ipynb #9f43abe6
 import numpy as np
+import sys
+from pathlib import Path
+
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 rng = np.random.default_rng(7)
 
 # Constants for memory calculations
@@ -11,38 +14,22 @@ BYTES_PER_FLOAT32 = 4  # Standard float32 size in bytes
 KB_TO_BYTES = 1024  # Kilobytes to bytes conversion
 MB_TO_BYTES = 1024 * 1024  # Megabytes to bytes conversion
 
-# %% ../../modules/01_tensor/tensor.ipynb #d6b380df
+
 class Tensor:
-    
 
     def __init__(self, data):
-        """Create a new tensor from data.
+        """Create a new tensor from data."""
 
-        TODO: Initialize a Tensor by wrapping data in a NumPy array and setting attributes.
-
-        APPROACH:
-        1. Convert data to NumPy array with dtype=float32
-        2. Store the array as self.data
-        3. Set self.shape from the array's shape
-        4. Set self.size from the array's size
-        5. Set self.dtype from the array's dtype
-        EXAMPLE:
-        >>> t = Tensor([1, 2, 3])
-        >>> print(t.shape)
-        (3,)
-        >>> print(t.size)
-        3
-
-        HINT: Use np.array(data, dtype=np.float32) to convert data to NumPy array
-        """
-        ### BEGIN 
-        if isinstance(data, (list, tuple)) and len(data) > 0 and isinstance(data[0], Tensor):
+        if (
+            isinstance(data, (list, tuple))
+            and len(data) > 0
+            and isinstance(data[0], Tensor)
+        ):
             data = np.stack([t.data for t in data])
         self.data = np.array(data, dtype=np.float32)
         self.shape = self.data.shape
         self.size = self.data.size
         self.dtype = self.data.dtype
-        ### END
 
     def __repr__(self):
         """String representation of tensor for debugging."""
@@ -96,27 +83,23 @@ class Tensor:
         Returns:
             New Tensor with masked positions replaced by value.
         """
-        mask_array = mask.data.astype(bool) if isinstance(mask, Tensor) else np.asarray(mask, dtype=bool)
+        mask_array = (
+            mask.data.astype(bool)
+            if isinstance(mask, Tensor)
+            else np.asarray(mask, dtype=bool)
+        )
         result = self.data.copy()
         result[mask_array] = value
         return Tensor(result)
 
     def __add__(self, other):
-        """Add two tensors element-wise with broadcasting support.
-
-
-        APPROACH:
-        1. Check if other is a Tensor (use isinstance)
-        2. If Tensor: add self.data + other.data
-        3. If scalar: add self.data + other (broadcasting)
-        4. Wrap result in new Tensor
-        """
-        ### BEGIN 
+        """Add two tensors element-wise with broadcasting support."""
+        ### BEGIN
         if isinstance(other, Tensor):
             return Tensor(self.data + other.data)
         else:
             return Tensor(self.data + other)
-        ### END 
+        ### END
 
     def __radd__(self, other):
         """Support natural scalar arithmetic: scalar + tensor."""
@@ -125,12 +108,12 @@ class Tensor:
     def __sub__(self, other):
         """Subtract two tensors element-wise."""
 
-        ### BEGIN 
+        ### BEGIN
         if isinstance(other, Tensor):
             return Tensor(self.data - other.data)
         else:
             return Tensor(self.data - other)
-        ### END 
+        ### END
 
     def __rsub__(self, other):
         """Support natural scalar arithmetic: scalar - tensor."""
@@ -139,14 +122,21 @@ class Tensor:
         return Tensor(other - self.data)
 
     def __mul__(self, other):
-        """Multiply two tensors element-wise (NOT matrix multiplication). """
+        """Multiply two tensors element-wise (NOT matrix multiplication)."""
 
-        ### BEGIN 
         if isinstance(other, Tensor):
             return Tensor(self.data * other.data)
         else:
             return Tensor(self.data * other)
-        ### END 
+
+    def __pow__(self, other):
+        # On s'assure que l'exposant est bien un nombre (int ou float)
+        assert isinstance(
+            other, (int, float)
+        ), "Seules les puissances numériques sont supportées"
+
+        # 1. Forward : Calcul de la valeur
+        return Tensor(self.data**other)
 
     def __rmul__(self, other):
         """Support natural scalar arithmetic: scalar * tensor."""
@@ -155,12 +145,10 @@ class Tensor:
     def __truediv__(self, other):
         """Divide two tensors element-wise."""
 
-        ### BEGIN 
         if isinstance(other, Tensor):
             return Tensor(self.data / other.data)
         else:
             return Tensor(self.data / other)
-        ### END 
 
     def __rtruediv__(self, other):
         """Support natural scalar arithmetic: scalar / tensor."""
@@ -171,7 +159,7 @@ class Tensor:
     def _validate_matmul_shapes(self, other):
         """Validate that two tensors are compatible for matrix multiplication."""
 
-        ### BEGIN 
+        ### BEGIN
         if not isinstance(other, Tensor):
             raise TypeError(
                 f"Matrix multiplication requires Tensor, got {type(other).__name__}\n"
@@ -194,12 +182,12 @@ class Tensor:
                     f"  💡 For A @ B, A's last dim must equal B's second-to-last dim\n"
                     f"  🔧 Try: other.transpose() to get shape {other.shape[::-1]}, or reshape self"
                 )
-        ### END 
+        ### END
 
     def matmul(self, other):
         """Matrix multiplication of two tensors."""
 
-        ### BEGIN 
+        ### BEGIN
         self._validate_matmul_shapes(other)
 
         # This is intentionally slower than np.matmul to demonstrate the value of vectorization
@@ -219,11 +207,11 @@ class Tensor:
                     # Dot product of row i from A with column j from B
                     result_data[i, j] = np.dot(a[i, :], b[:, j])
         else:
-            
+
             result_data = np.matmul(a, b)
 
         return Tensor(result_data)
-        ### END 
+        ### END
 
     def __matmul__(self, other):
         """Enable @ operator for matrix multiplication."""
@@ -232,17 +220,17 @@ class Tensor:
     def __getitem__(self, key):
         """Enable indexing and slicing operations on Tensors."""
 
-        ### BEGIN 
+        ### BEGIN
         result_data = self.data[key]
         if not isinstance(result_data, np.ndarray):
             result_data = np.array(result_data)
         return Tensor(result_data)
-        ### END 
+        ### END
 
     def reshape(self, *shape):
         """Reshape tensor to new dimensions."""
 
-        ### BEGIN 
+        ### BEGIN
         if len(shape) == 1 and isinstance(shape[0], (tuple, list)):
             new_shape = tuple(shape[0])
         else:
@@ -281,7 +269,7 @@ class Tensor:
             )
         reshaped_data = np.reshape(self.data, new_shape)
         return Tensor(reshaped_data)
-        ### END 
+        ### END
 
     def transpose(self, dim0=None, dim1=None):
         """Transpose tensor dimensions.
@@ -308,7 +296,7 @@ class Tensor:
         - For default: axes[-2], axes[-1] = axes[-1], axes[-2]
         - Use np.transpose(self.data, axes)
         """
-        ### BEGIN 
+        ### BEGIN
         if dim0 is None and dim1 is None:
             if len(self.shape) < 2:
                 return Tensor(self.data.copy())
@@ -330,28 +318,28 @@ class Tensor:
             axes[dim0], axes[dim1] = axes[dim1], axes[dim0]
             transposed_data = np.transpose(self.data, axes)
         return Tensor(transposed_data)
-        ### END 
+        ### END
 
     def sum(self, axis=None, keepdims=False):
         """Sum tensor along specified axis."""
 
-        ### BEGIN 
+        ### BEGIN
         result = np.sum(self.data, axis=axis, keepdims=keepdims)
         return Tensor(result)
-        ### END 
+        ### END
 
     def mean(self, axis=None, keepdims=False):
         """Compute mean of tensor along specified axis."""
 
-        ### BEGIN 
+        ### BEGIN
         result = np.mean(self.data, axis=axis, keepdims=keepdims)
         return Tensor(result)
-        ### END 
+        ### END
 
     def max(self, axis=None, keepdims=False):
-        """Find maximum values along specified axis. """
+        """Find maximum values along specified axis."""
 
-        ### BEGIN 
+        ### BEGIN
         result = np.max(self.data, axis=axis, keepdims=keepdims)
         return Tensor(result)
-        ### END 
+        ### END
