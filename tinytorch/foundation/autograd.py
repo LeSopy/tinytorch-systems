@@ -31,11 +31,8 @@ import numpy as np
 
 rng = np.random.default_rng(7)
 from typing import Optional, List, Tuple
-import sys
 import os
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from tinytorch.foundation.tensor import Tensor
 
@@ -756,11 +753,6 @@ def enable_autograd(quiet=False):
 
     """
 
-    # Note: hasattr() is LEGITIMATE here because:
-    # 1. This is a runtime monkey-patch system (meta-programming)
-    # 2. We're checking if a class has been dynamically modified
-    # 3. _autograd_enabled is a marker attribute we add at runtime
-    # This is the CORRECT use of hasattr() for dynamic class modification
     if hasattr(Tensor, "_autograd_enabled"):
         # Silently return if already enabled - no need to warn
         return
