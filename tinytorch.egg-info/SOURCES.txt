@@ -1,0 +1,17 @@
+LICENSE
+README.md
+setup.py
+tinytorch/__init__.py
+tinytorch.egg-info/PKG-INFO
+tinytorch.egg-info/SOURCES.txt
+tinytorch.egg-info/dependency_links.txt
+tinytorch.egg-info/top_level.txt
+tinytorch/architecture/__init__.py
+tinytorch/foundation/__init__.py
+tinytorch/foundation/activations.py
+tinytorch/foundation/autograd.py
+tinytorch/foundation/dataloader.py
+tinytorch/foundation/layers.py
+tinytorch/foundation/losses.py
+tinytorch/foundation/optimizers.py
+tinytorch/foundation/tensor.py

@@ -6,11 +6,7 @@ Tests automatic differentiation and computational graphs
 
 import numpy as np
 import pytest
-import sys
-from pathlib import Path
 
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from tinytorch.foundation.tensor import Tensor
 from tinytorch.foundation.autograd import enable_autograd, no_grad
 

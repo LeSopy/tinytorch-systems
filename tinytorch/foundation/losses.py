@@ -17,9 +17,6 @@ from typing import Optional
 import sys
 from pathlib import Path
 
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-
 # Import from my-tinyTorch package (previous modules must be completed and exported)
 from tinytorch.foundation.tensor import Tensor
 from tinytorch.foundation.activations import ReLU
