@@ -18,10 +18,6 @@ import numpy as np
 rng = np.random.default_rng(7)
 from typing import List, Union, Optional, Dict, Any
 
-import sys
-
-# sys.path.append(r"D:\DS\Data Science\TinyTorch\projects\my-tinytorch-systems")
-
 # Import Tensor from Module 01 (now with gradient support from Module 06)
 from tinytorch.foundation.tensor import Tensor
 

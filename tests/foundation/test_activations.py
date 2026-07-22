@@ -4,12 +4,10 @@ Module 02: Activations - Core Functionality Tests
 """
 
 import numpy as np
+
 rng = np.random.default_rng(7)
 import pytest
-import sys
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from tinytorch.foundation.activations import ReLU, Sigmoid, Tanh, Softmax
 from tinytorch.foundation.tensor import Tensor
@@ -86,9 +84,9 @@ class TestSigmoidActivation:
         output = sigmoid(x)
 
         # Sigmoid(0) = 0.5
-        assert np.isclose(output.data[0], 0.5, atol=1e-6), (
-            f"Sigmoid(0) should be 0.5, got {output.data[0]}"
-        )
+        assert np.isclose(
+            output.data[0], 0.5, atol=1e-6
+        ), f"Sigmoid(0) should be 0.5, got {output.data[0]}"
 
         # All outputs must be in (0, 1)
         assert np.all(output.data > 0) and np.all(output.data < 1), (
@@ -99,7 +97,7 @@ class TestSigmoidActivation:
 
     def test_sigmoid_symmetry(self):
         """
-         Verify sigma(-x) = 1 - sigma(x) (point symmetry around 0.5).
+        Verify sigma(-x) = 1 - sigma(x) (point symmetry around 0.5).
         """
         sigmoid = Sigmoid()
         x = 2.0
@@ -147,13 +145,12 @@ class TestTanhActivation:
         x = Tensor(np.array([0, 1, -1]))
         output = tanh(x)
 
-        assert np.isclose(output.data[0], 0, atol=1e-6), (
-            f"tanh(0) should be 0, got {output.data[0]}"
-        )
+        assert np.isclose(
+            output.data[0], 0, atol=1e-6
+        ), f"tanh(0) should be 0, got {output.data[0]}"
 
         assert np.all(output.data > -1) and np.all(output.data < 1), (
-            f"tanh outputs must be in (-1, 1).\n"
-            f"  Got: {output.data}"
+            f"tanh outputs must be in (-1, 1).\n" f"  Got: {output.data}"
         )
 
     def test_tanh_antisymmetry(self):
@@ -207,8 +204,7 @@ class TestSoftmaxActivation:
         )
 
         assert np.all(output.data > 0), (
-            f"Softmax outputs must all be positive.\n"
-            f"  Got: {output.data}"
+            f"Softmax outputs must all be positive.\n" f"  Got: {output.data}"
         )
 
     def test_softmax_properties(self):
@@ -240,9 +236,9 @@ class TestSoftmaxActivation:
         x = Tensor(np.array([1000, 1001, 1002]))
         output = softmax(x)
 
-        assert np.isclose(np.sum(output.data), 1.0, atol=1e-6), (
-            "Softmax failed with large values - likely overflow."
-        )
+        assert np.isclose(
+            np.sum(output.data), 1.0, atol=1e-6
+        ), "Softmax failed with large values - likely overflow."
         assert np.all(np.isfinite(output.data)), (
             f"Softmax produced NaN/Inf with large values.\n"
             f"  Input: {x.data}\n"
@@ -266,13 +262,13 @@ class TestActivationComposition:
         x = Tensor(np.array([-2, -1, 0, 1, 2]))
 
         # Chain: x -> ReLU -> Sigmoid
-        h = relu(x)      # [-2,-1,0,1,2] -> [0,0,0,1,2]
+        h = relu(x)  # [-2,-1,0,1,2] -> [0,0,0,1,2]
         output = sigmoid(h)  # -> [0.5,0.5,0.5,0.73,0.88]
 
         assert output.shape == x.shape
-        assert np.all(output.data >= 0) and np.all(output.data <= 1), (
-            "Chained activation output should be in sigmoid range [0,1]."
-        )
+        assert np.all(output.data >= 0) and np.all(
+            output.data <= 1
+        ), "Chained activation output should be in sigmoid range [0,1]."
 
     def test_activation_with_batch_data(self):
         """
@@ -281,7 +277,11 @@ class TestActivationComposition:
         # Batch of 4 samples, 3 features each
         x = Tensor(rng.standard_normal((4, 3)))
 
-        for name, activation in [("ReLU", ReLU()), ("Sigmoid", Sigmoid()), ("Tanh", Tanh())]:
+        for name, activation in [
+            ("ReLU", ReLU()),
+            ("Sigmoid", Sigmoid()),
+            ("Tanh", Tanh()),
+        ]:
             output = activation(x)
             assert output.shape == x.shape, (
                 f"{name} changed shape!\n"
@@ -300,14 +300,14 @@ class TestActivationComposition:
         assert relu(zero_input).data[0] == 0.0, "ReLU(0) should be 0"
 
         sigmoid = Sigmoid()
-        assert np.isclose(sigmoid(zero_input).data[0], 0.5, atol=1e-6), (
-            "Sigmoid(0) should be 0.5"
-        )
+        assert np.isclose(
+            sigmoid(zero_input).data[0], 0.5, atol=1e-6
+        ), "Sigmoid(0) should be 0.5"
 
         tanh = Tanh()
-        assert np.isclose(tanh(zero_input).data[0], 0.0, atol=1e-6), (
-            "Tanh(0) should be 0"
-        )
+        assert np.isclose(
+            tanh(zero_input).data[0], 0.0, atol=1e-6
+        ), "Tanh(0) should be 0"
 
 
 if __name__ == "__main__":

@@ -77,7 +77,7 @@ class Linear(Layer):
         Initialize linear layer with proper weight initialization.
 
         """
-        ### BEGIN SOLUTION
+
         self.in_features = in_features
         self.out_features = out_features
 
@@ -92,7 +92,6 @@ class Linear(Layer):
             self.bias = Tensor(bias_data)
         else:
             self.bias = None
-        ### END SOLUTION
 
     def forward(self, x):
         """
