@@ -5,13 +5,14 @@ Module 04: Losses - Core Functionality Tests
 
 import numpy as np
 import pytest
-import sys
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from tinytorch.foundation.tensor import Tensor
-from tinytorch.foundation.losses import MSELoss, CrossEntropyLoss, BinaryCrossEntropyLoss
+from tinytorch.foundation.losses import (
+    MSELoss,
+    CrossEntropyLoss,
+    BinaryCrossEntropyLoss,
+)
 
 
 class TestMSELoss:
@@ -37,6 +38,7 @@ class TestMSELoss:
             f"  Got: {loss.data}"
         )
 
+
 class TestCrossEntropyLoss:
     """Test Cross-Entropy loss for classification."""
 
@@ -53,9 +55,9 @@ class TestCrossEntropyLoss:
         loss = loss_fn(logits, target)
 
         # Loss should be small (predicted correct class)
-        assert float(loss.data) < 1.0, (
-            "CE loss should be small when predicting correct class"
-        )
+        assert (
+            float(loss.data) < 1.0
+        ), "CE loss should be small when predicting correct class"
 
     def test_cross_entropy_wrong_prediction(self):
         """
@@ -70,9 +72,9 @@ class TestCrossEntropyLoss:
         loss = loss_fn(logits, target)
 
         # Loss should be high
-        assert float(loss.data) > 1.0, (
-            "CE loss should be high for confident wrong predictions"
-        )
+        assert (
+            float(loss.data) > 1.0
+        ), "CE loss should be high for confident wrong predictions"
 
 
 if __name__ == "__main__":

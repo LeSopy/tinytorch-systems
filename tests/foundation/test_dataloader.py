@@ -4,12 +4,10 @@ Module 05: DataLoader - Core Functionality Tests
 """
 
 import numpy as np
+
 rng = np.random.default_rng(7)
 import pytest
-import sys
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from tinytorch.foundation.layers import Layer
 from tinytorch.foundation.tensor import Tensor
@@ -72,7 +70,10 @@ class TestDataLoaderBasics:
         # Both batches must be non-empty and the correct size
         assert len(batch1.data) > 0, "Shuffled loader should produce non-empty batches"
         assert len(batch2.data) > 0, "Shuffled loader should produce non-empty batches"
-        assert batch1.data.shape == (10, 1), f"Expected shape (10, 1), got {batch1.data.shape}"
+        assert batch1.data.shape == (
+            10,
+            1,
+        ), f"Expected shape (10, 1), got {batch1.data.shape}"
 
         # Two independently-shuffled loaders should almost certainly produce different
         # orderings. The probability of an identical first batch by chance is 1/C(100,10),

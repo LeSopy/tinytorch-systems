@@ -4,12 +4,10 @@ Module 03: Layers - Core Functionality Tests
 """
 
 import numpy as np
+
 rng = np.random.default_rng(7)
 import pytest
-import sys
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from tinytorch.foundation.layers import Layer
 from tinytorch.foundation.tensor import Tensor
@@ -33,7 +31,7 @@ class TestLayerBaseClass:
         """
         layer = Layer()
 
-        assert hasattr(layer, 'forward'), (
+        assert hasattr(layer, "forward"), (
             "Layer must have forward() method.\n"
             "This is where the computation happens."
         )
@@ -47,8 +45,10 @@ class TestLayerBaseClass:
         """
         WHAT: Verify custom layers can inherit from Layer.
         """
+
         class IdentityLayer(Layer):
             """A layer that returns its input unchanged."""
+
             def forward(self, x):
                 return x
 
@@ -57,9 +57,9 @@ class TestLayerBaseClass:
         output = layer(x)
 
         assert isinstance(output, Tensor)
-        assert np.array_equal(output.data, x.data), (
-            "Identity layer should return input unchanged."
-        )
+        assert np.array_equal(
+            output.data, x.data
+        ), "Identity layer should return input unchanged."
 
 
 class TestParameterManagement:
@@ -71,6 +71,7 @@ class TestParameterManagement:
         """
         WHAT: Verify layers can store trainable parameters.
         """
+
         class ParameterLayer(Layer):
             def __init__(self, input_size, output_size):
                 self.weights = Tensor(rng.standard_normal((input_size, output_size)))
@@ -81,16 +82,18 @@ class TestParameterManagement:
 
         layer = ParameterLayer(5, 3)
 
-        assert hasattr(layer, 'weights'), "Layer should store weights"
-        assert hasattr(layer, 'bias'), "Layer should store bias"
-        assert layer.weights.shape == (5, 3), (
-            f"Weights shape wrong: expected (5, 3), got {layer.weights.shape}"
-        )
+        assert hasattr(layer, "weights"), "Layer should store weights"
+        assert hasattr(layer, "bias"), "Layer should store bias"
+        assert layer.weights.shape == (
+            5,
+            3,
+        ), f"Weights shape wrong: expected (5, 3), got {layer.weights.shape}"
 
     def test_parameter_initialization(self):
         """
         WHAT: Verify weights are initialized properly.
         """
+
         class XavierLayer(Layer):
             def __init__(self, size):
                 # Xavier initialization
@@ -113,6 +116,7 @@ class TestParameterManagement:
         """
         WHAT: Verify parameter shapes match layer configuration.
         """
+
         class LinearLayer(Layer):
             def __init__(self, in_features, out_features):
                 self.in_features = in_features
@@ -152,6 +156,7 @@ class TestLinearTransformations:
         """
         WHAT: Verify matrix multiplication works correctly.
         """
+
         class MatMulLayer(Layer):
             def __init__(self, weight_matrix):
                 self.weights = Tensor(weight_matrix)
@@ -178,6 +183,7 @@ class TestLinearTransformations:
         """
         WHAT: Verify affine transformation y = Wx + b.
         """
+
         class AffineLayer(Layer):
             def __init__(self, weights, bias):
                 self.weights = Tensor(weights)
@@ -187,7 +193,7 @@ class TestLinearTransformations:
                 return Tensor(x.data @ self.weights.data + self.bias.data)
 
         W = np.array([[1, 0], [0, 1]])  # Identity
-        b = np.array([10, 20])           # Offset
+        b = np.array([10, 20])  # Offset
 
         layer = AffineLayer(W, b)
         x = Tensor(np.array([[1, 2]]))
@@ -206,6 +212,7 @@ class TestLinearTransformations:
         """
         WHAT: Verify layer processes batches correctly.
         """
+
         class ScaleLayer(Layer):
             def __init__(self):
                 self.weights = Tensor(np.array([[2, 0], [0, 3]]))
@@ -238,15 +245,18 @@ class TestLayerComposition:
         """
         WHAT: Verify layers can be chained together.
         """
+
         class ScaleLayer(Layer):
             def __init__(self, scale):
                 self.scale = scale
+
             def forward(self, x):
                 return Tensor(x.data * self.scale)
 
         class AddLayer(Layer):
             def __init__(self, offset):
                 self.offset = offset
+
             def forward(self, x):
                 return Tensor(x.data + self.offset)
 
@@ -254,7 +264,7 @@ class TestLayerComposition:
         layer2 = AddLayer(10)
 
         x = Tensor(np.array([1, 2, 3]))
-        h = layer1(x)    # [2, 4, 6]
+        h = layer1(x)  # [2, 4, 6]
         output = layer2(h)  # [12, 14, 16]
 
         expected = np.array([12, 14, 16])
@@ -270,9 +280,11 @@ class TestLayerComposition:
         """
         WHAT: Verify Sequential container works.
         """
+
         class Sequential(Layer):
             def __init__(self, layers):
                 self.layers = layers
+
             def forward(self, x):
                 for layer in self.layers:
                     x = layer(x)
@@ -281,12 +293,13 @@ class TestLayerComposition:
         class LinearLayer(Layer):
             def __init__(self, weights):
                 self.weights = Tensor(weights)
+
             def forward(self, x):
                 return Tensor(x.data @ self.weights.data)
 
         # 2-layer network
         layer1 = LinearLayer(np.array([[1, 2], [3, 4]]))  # 2→2
-        layer2 = LinearLayer(np.array([[1], [1]]))        # 2→1
+        layer2 = LinearLayer(np.array([[1], [1]]))  # 2→1
 
         network = Sequential([layer1, layer2])
 
@@ -313,6 +326,7 @@ class TestLayerUtilities:
         """
         WHAT: Verify we can count layer parameters.
         """
+
         class CountableLayer(Layer):
             def __init__(self, in_features, out_features):
                 self.weights = Tensor(rng.standard_normal((in_features, out_features)))
@@ -328,7 +342,7 @@ class TestLayerUtilities:
 
         # 10*5 weights + 5 biases = 55 parameters
         expected_count = 10 * 5 + 5
-        if hasattr(layer, 'parameter_count'):
+        if hasattr(layer, "parameter_count"):
             assert layer.parameter_count() == expected_count, (
                 f"Parameter count wrong.\n"
                 f"  Linear(10, 5): 10*5 + 5 = 55\n"
@@ -339,6 +353,7 @@ class TestLayerUtilities:
         """
         WHAT: Verify we can predict output shape.
         """
+
         class ShapeInferenceLayer(Layer):
             def __init__(self, out_features):
                 self.out_features = out_features
@@ -352,7 +367,7 @@ class TestLayerUtilities:
 
         layer = ShapeInferenceLayer(20)
 
-        if hasattr(layer, 'output_shape'):
+        if hasattr(layer, "output_shape"):
             out_shape = layer.output_shape((32, 10))
             assert out_shape == (32, 20), (
                 f"Shape inference wrong.\n"

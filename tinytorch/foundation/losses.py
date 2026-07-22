@@ -13,10 +13,6 @@ import numpy as np
 rng = np.random.default_rng(7)
 from typing import Optional
 
-
-import sys
-from pathlib import Path
-
 # Import from my-tinyTorch package (previous modules must be completed and exported)
 from tinytorch.foundation.tensor import Tensor
 from tinytorch.foundation.activations import ReLU
