@@ -1,23 +1,19 @@
-
-# Export 
-__all__ = ['rng', 'TOLERANCE', 'Sigmoid', 'ReLU', 'Tanh', 'GELU', 'Softmax']
+# Export
+__all__ = ["rng", "TOLERANCE", "Sigmoid", "ReLU", "Tanh", "GELU", "Softmax"]
 
 import numpy as np
+
 rng = np.random.default_rng(7)
 from typing import Optional
 
-import sys
-from pathlib import Path
-
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from tinytorch.foundation.tensor import Tensor
 
 # Constants for numerical comparisons
 TOLERANCE = 1e-10  # Small tolerance for floating-point comparisons in tests
 
 # Export only activation classes
-__all__ = ['Sigmoid', 'ReLU', 'Tanh', 'GELU', 'Softmax']
+__all__ = ["Sigmoid", "ReLU", "Tanh", "GELU", "Softmax"]
+
 
 class Sigmoid:
     """
@@ -32,7 +28,7 @@ class Sigmoid:
         """
         Apply sigmoid activation element-wise.
         """
-        
+
         x_data = x.data
         with np.errstate(over="ignore", invalid="ignore"):
             result = np.where(
@@ -45,6 +41,7 @@ class Sigmoid:
     def __call__(self, x: Tensor) -> Tensor:
         """Allows the activation to be called like a function."""
         return self.forward(x)
+
 
 class ReLU:
     """
@@ -67,6 +64,7 @@ class ReLU:
         """Allows the activation to be called like a function."""
         return self.forward(x)
 
+
 class Tanh:
     """
     Tanh activation: f(x) = (e^x - e^(-x))/(e^x + e^(-x))
@@ -88,6 +86,7 @@ class Tanh:
         """Allows the activation to be called like a function."""
         return self.forward(x)
 
+
 class GELU:
     """
     GELU activation: f(x) = x * Φ(x) ≈ x * Sigmoid(1.702 * x)
@@ -106,6 +105,7 @@ class GELU:
     def __call__(self, x: Tensor) -> Tensor:
         """Allows the activation to be called like a function."""
         return self.forward(x)
+
 
 class Softmax:
     """

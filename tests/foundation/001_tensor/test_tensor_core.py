@@ -8,16 +8,12 @@ These tests verify that Tensor, the fundamental data structure of TinyTorch, wor
 """
 
 import numpy as np
+
 rng = np.random.default_rng(7)
 import pytest
-import sys
-from pathlib import Path
-
-# Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 # Import at module level - if this fails, the module isn't complete
-#from tinytorch.core.tensor import Tensor
+# from tinytorch.core.tensor import Tensor
 from tinytorch.foundation.tensor import Tensor
 
 
@@ -149,7 +145,7 @@ class TestTensorOperations:
         t2 = Tensor([[5, 6], [7, 8]])  # 2×2
 
         # Matrix multiplication using @ operator
-        if hasattr(t1, '__matmul__'):
+        if hasattr(t1, "__matmul__"):
             result = t1 @ t2
         else:
             result = Tensor(t1.data @ t2.data)
@@ -205,7 +201,7 @@ class TestTensorMemory:
         data = np.array([1, 2, 3, 4])
         t = Tensor(data)
 
-        assert hasattr(t, 'data'), (
+        assert hasattr(t, "data"), (
             "Tensor must have a .data attribute.\n"
             "This gives access to the underlying NumPy array."
         )
@@ -255,8 +251,7 @@ class TestTensorMemory:
 
         assert t.shape == (1000, 1000)
         assert t.data.size == 1000000, (
-            f"Tensor should have 1M elements.\n"
-            f"  Got: {t.data.size} elements"
+            f"Tensor should have 1M elements.\n" f"  Got: {t.data.size} elements"
         )
 
 
@@ -282,7 +277,7 @@ class TestTensorReshaping:
         """
         t = Tensor(np.arange(12))  # [0, 1, 2, ..., 11]
 
-        if hasattr(t, 'reshape'):
+        if hasattr(t, "reshape"):
             reshaped = t.reshape(3, 4)
             assert reshaped.shape == (3, 4), (
                 f"Reshape failed.\n"
@@ -307,7 +302,7 @@ class TestTensorReshaping:
         """
         t = Tensor(rng.standard_normal((2, 3, 4)))  # 2×3×4 = 24 elements
 
-        if hasattr(t, 'flatten'):
+        if hasattr(t, "flatten"):
             flat = t.flatten()
             assert flat.shape == (24,), (
                 f"Flatten failed.\n"
@@ -333,8 +328,8 @@ class TestTensorReshaping:
         """
         t = Tensor([[1, 2, 3], [4, 5, 6]])  # 2×3
 
-        if hasattr(t, 'T') or hasattr(t, 'transpose'):
-            transposed = t.T if hasattr(t, 'T') else t.transpose()
+        if hasattr(t, "T") or hasattr(t, "transpose"):
+            transposed = t.T if hasattr(t, "T") else t.transpose()
 
             assert transposed.shape == (3, 2), (
                 f"Transpose failed.\n"
@@ -382,9 +377,9 @@ class TestTensorBroadcasting:
         )
 
         result = 5 + t
-        assert np.array_equal(result.data, expected), (
-            "Scalar arithmetic should work naturally with the scalar first too."
-        )
+        assert np.array_equal(
+            result.data, expected
+        ), "Scalar arithmetic should work naturally with the scalar first too."
 
         result = 2 * t
         assert np.array_equal(result.data, np.array([2, 4, 6]))
@@ -408,7 +403,7 @@ class TestTensorBroadcasting:
         (2,3) + (2,) fails because 2 doesn't align with 3.
         """
         t1 = Tensor([[1, 2, 3], [4, 5, 6]])  # 2×3
-        t2 = Tensor([10, 20, 30])            # 3,
+        t2 = Tensor([10, 20, 30])  # 3,
 
         result = t1 + t2
         assert result.shape == (2, 3), (
