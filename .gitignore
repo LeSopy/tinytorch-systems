@@ -15,4 +15,7 @@ venv/
 
 # OS files
 .DS_Store
-Thumbs.db
+Thumbs.dbdatasets/
+datasets/
+*.tar.gz
+*.pkl        # only if pkl files are large — keep small ones if needed
