@@ -1,0 +1,123 @@
+# Examples 02: The CNN Revolution (1998)
+
+
+## What We're Building
+
+CNNs that exploit spatial structure in images:
+1. **TinyDigits** - Prove convolution works on 8×8 digits
+2. **CIFAR-10** - Scale to natural color images (32×32)
+
+## Required Modules
+
+**Run after Module 09** (Convolutions: Conv2d + Pooling)
+
+<table width="100%">
+  <thead>
+<tr>
+<th width="25%"><b>Module</b></th>
+<th width="25%">Component</th>
+<th width="50%">What It Provides</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><b>Module 01</b></td><td>Tensor</td><td> data structure</td></tr>
+<tr><td><b>Module 02</b></td><td>Activations</td><td> ReLU activation</td></tr>
+<tr><td><b>Module 03</b></td><td>Layers</td><td> Linear layers</td></tr>
+<tr><td><b>Module 04</b></td><td>Losses</td><td> CrossEntropyLoss</td></tr>
+<tr><td><b>Module 05</b></td><td>DataLoader</td><td> data batching</td></tr>
+<tr><td><b>Module 06</b></td><td>Autograd</td><td> automatic differentiation</td></tr>
+<tr><td><b>Module 07</b></td><td>Optimizers</td><td> SGD/Adam optimizers</td></tr>
+<tr><td><b>Module 08</b></td><td>Training</td><td> end-to-end training loop</td></tr>
+<tr><td><b>Module 09</b></td><td>Convolutions</td><td> Conv2d + MaxPool2d</td></tr>
+</tbody>
+</table>
+
+## Example Structure
+
+This example has **two parts** that progressively showcase  TinyTorch modules:
+
+### Part 1: TinyDigits (works offline, default)
+
+**Script:** `01_lecun_tinydigits.py`
+
+**Purpose:** Prove CNNs > MLPs on same data
+
+- **Dataset:** TinyDigits (8x8 handwritten digits, ships with repo)
+- **Architecture:** Conv(1->8) -> Pool  -> Linear(->10)
+- **Comparison:** CNN ~85% vs MLP ~80% 
+- **Key Learning:** "Convolution preserves spatial structure!"
+
+**Why This Comparison Matters:**
+- Same dataset, different architecture
+- Direct proof that spatial operations help
+- ~5% accuracy gain from exploiting locality
+
+### Part 2: CIFAR-10 (optional scale-up, requires download)
+
+**Script:** `02_cifar10.py`
+
+**Purpose:** Scale to natural color images + showcase YOUR DataLoader!
+
+- **Dataset:** CIFAR-10 (60K images, 32x32 RGB, 10 classes)
+- **Architecture:** Deeper CNN with BatchNorm + data augmentation
+- **Expected:** 70%+ accuracy
+- **Key Learning:** " DataLoader + CNN scale to realistic vision!"
+
+**What Part 2 Showcases:**
+- **DataLoader (Module 05)** batches 50,000 images efficiently
+- **Dataset abstraction** handles real image data
+- Shuffling prevents memorization, improves generalization
+- First-run prompts for download (~170 MB) with space check
+
+
+## Expected Results
+
+<table width="100%">
+  <thead>
+<tr>
+<th width="18%"><b>Script</b></th>
+<th width="12%">Dataset</th>
+<th width="12%">Image Size</th>
+<th width="15%">Architecture</th>
+<th width="12%">Accuracy</th>
+<th width="15%">Training Time</th>
+<th width="18%">vs MLP</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><b>01 (TinyDigits)</b></td><td>1K train</td><td>8×8 gray</td><td>Simple CNN</td><td>~85%</td><td>1-2 min</td><td>+5% improvement</td></tr>
+<tr><td><b>02 (CIFAR-10)</b></td><td>50K train</td><td>32×32 RGB</td><td>Deeper CNN</td><td>65-75%</td><td>30-60 min</td><td>MLPs struggle here</td></tr>
+</tbody>
+</table>
+
+## Key Learning: Why Convolution Dominates Vision
+
+CNNs exploit three key principles:
+
+### 1. Local Connectivity
+**MLP:** Every pixel connects to every neuron (millions of parameters)
+**CNN:** Only local regions connect (shared filters, 100× fewer params)
+
+### 2. Translation Invariance
+**MLP:** "Cat in top-left" ≠ "Cat in bottom-right" (different weights!)
+**CNN:** Same filter detects features anywhere (shared weights)
+
+### 3. Hierarchical Features
+**Layer 1:** Edge detectors (vertical, horizontal, diagonal)
+**Layer 2:** Texture patterns (combinations of edges)
+**Layer 3:** Object parts (wheels, faces, legs)
+**Output:** Full objects (cars, cats, planes)
+
+
+## Running the Example
+
+```bash
+
+
+# Or run the default script directly
+cd examples/cnn
+python 01_lecun_tinydigits.py
+
+# Optional scale-up to natural images
+python 02_cifar10.py
+```

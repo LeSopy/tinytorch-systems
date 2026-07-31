@@ -724,7 +724,7 @@ class BatchNorm2d:
             )
 
     def _get_stats(self, x):
-        """Get nean and variance for normalization (Batch or running stats)"""
+        """Get mean and variance for normalization (Batch or running stats)"""
 
         if self.training:
             # Compute batch statistics per channel

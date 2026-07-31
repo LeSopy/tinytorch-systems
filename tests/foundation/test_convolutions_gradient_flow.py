@@ -55,7 +55,9 @@ def test_conv2d_weight_gradient_flow():
         conv.weight.grad.data, 0
     ), "Conv2d weight gradient should be non-zero"
 
-    print(f" Conv2d weight gradient: mean = {np.abs(conv.weight.grad.data).mean():.6f}")
+    print(
+        f"✅ Conv2d weight gradient: mean = {np.abs(conv.weight.grad.data).mean():.6f}"
+    )
 
 
 def test_conv2d_bias_gradient_flow():
