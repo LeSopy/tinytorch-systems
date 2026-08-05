@@ -16,7 +16,7 @@ from tinytorch import CrossEntropyLoss
 from tinytorch.foundation.tensor import Tensor
 from tinytorch.foundation.layers import Linear
 from tinytorch.foundation.activations import ReLU, Softmax
-from tinytorch.foundation.convolutions import (
+from tinytorch.architecture.convolutions import (
     Conv2d,
     MaxPool2d,
     BatchNorm2d,

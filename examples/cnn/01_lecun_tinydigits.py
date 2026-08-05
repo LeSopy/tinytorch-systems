@@ -19,7 +19,7 @@ from rich import box
 
 # Import TinyTorch components
 from tinytorch import Tensor, SGD, CrossEntropyLoss
-from tinytorch.foundation.convolutions import Conv2d, MaxPool2d
+from tinytorch.architecture.convolutions import Conv2d, MaxPool2d
 from tinytorch.foundation.layers import Linear, ReLU
 from tinytorch.foundation.dataloader import DataLoader, TensorDataset
 

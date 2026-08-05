@@ -10,7 +10,7 @@ import sys
 
 from tinytorch.foundation.tensor import Tensor
 from tinytorch.foundation.autograd import enable_autograd
-from tinytorch.foundation.convolutions import Conv2d, MaxPool2d
+from tinytorch.architecture.convolutions import Conv2d, MaxPool2d
 
 
 def test_conv2d_has_backward_function():

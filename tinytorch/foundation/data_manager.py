@@ -2,15 +2,6 @@
 """
 TinyTorch Dataset Manager
 ========================
-
-Handles dataset downloading and preparation for milestone examples.
-Students can focus on demonstrating their ML systems, not fighting with data logistics!
-
-Supported Datasets:
-- MNIST: Handwritten digits (28x28 grayscale)
-- CIFAR-10: Natural images (32x32 RGB)
-- XOR: Synthetic non-linear problem
-- Perceptron: Synthetic linearly separable data
 """
 
 import os
@@ -37,13 +28,6 @@ DATASET_INFO = {
         "extracted_size_mb": 180,
         "description": "60,000 natural images (32x32 RGB) in 10 classes",
         "url": "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz",
-    },
-    "mnist": {
-        "name": "MNIST",
-        "download_size_mb": 12,
-        "extracted_size_mb": 55,
-        "description": "70,000 handwritten digits (28x28 grayscale)",
-        "url": "http://yann.lecun.com/exdb/mnist/",
     },
 }
 
@@ -171,37 +155,6 @@ class DatasetManager:
         urllib.request.urlretrieve(url, filename, progress_hook)
         print("\n✅ Download complete!")
 
-    def get_mnist(self):
-        """Download and prepare MNIST for optional scale-up experiments."""
-        mnist_dir = self.data_dir / "mnist"
-        mnist_dir.mkdir(exist_ok=True)
-
-        # MNIST URLs
-        base_url = "http://yann.lecun.com/exdb/mnist/"
-        files = [
-            "train-images-idx3-ubyte.gz",
-            "train-labels-idx1-ubyte.gz",
-            "t10k-images-idx3-ubyte.gz",
-            "t10k-labels-idx1-ubyte.gz",
-        ]
-
-        # Download if needed
-        for filename in files:
-            filepath = mnist_dir / filename
-            if not filepath.exists():
-                self.download_with_progress(base_url + filename, filepath)
-
-        # Load and return data
-        train_images = self._load_mnist_images(mnist_dir / files[0])
-        train_labels = self._load_mnist_labels(mnist_dir / files[1])
-        test_images = self._load_mnist_images(mnist_dir / files[2])
-        test_labels = self._load_mnist_labels(mnist_dir / files[3])
-
-        print(
-            f"📊 MNIST loaded: {len(train_images)} training, {len(test_images)} test images"
-        )
-        return (train_images, train_labels), (test_images, test_labels)
-
     def get_cifar10(self):
         """Download and prepare CIFAR-10 dataset for CNN milestone."""
         cifar_dir = self.data_dir / "cifar-10"
@@ -258,85 +211,16 @@ class DatasetManager:
         )
         return (train_data, train_labels), (test_data, test_labels)
 
-    def get_xor_data(self, num_samples=1000):
-        """Generate XOR problem data for non-linear milestone."""
-        print("🧮 Generating XOR problem data...")
-
-        # Create XOR dataset
-        rng = np.random.default_rng(7)  # Reproducible
-        X = rng.integers(0, 2, (num_samples, 2)).astype(np.float32)
-        # XOR: output 1 when inputs differ, 0 when same
-        y = (X[:, 0].astype(int) != X[:, 1].astype(int)).astype(np.int64)
-
-        # Add some noise to make it more realistic
-        X += rng.normal(0, 0.1, X.shape)
-
-        print(f"📊 XOR data generated: {num_samples} samples")
-        print("   Classes: [0,0]→0, [0,1]→1, [1,0]→1, [1,1]→0")
-        return X, y
-
-    def get_perceptron_data(self, num_samples=1000):
-        """Generate linearly separable data for perceptron milestone."""
-        print("📏 Generating linearly separable data...")
-
-        rng = np.random.default_rng(7)
-
-        # Create two clusters
-        cluster1 = rng.normal([2, 2], 0.5, (num_samples // 2, 2))
-        cluster2 = rng.normal([-2, -2], 0.5, (num_samples // 2, 2))
-
-        X = np.vstack([cluster1, cluster2]).astype(np.float32)
-        y = np.hstack([np.ones(num_samples // 2), np.zeros(num_samples // 2)]).astype(
-            np.int64
-        )
-
-        # Shuffle
-        indices = rng.permutation(num_samples)
-        X, y = X[indices], y[indices]
-
-        print(f"📊 Perceptron data generated: {num_samples} linearly separable samples")
-        return X, y
-
-    def _load_mnist_images(self, filepath):
-        """Load MNIST image file."""
-        with gzip.open(filepath, "rb") as f:
-            # Skip header
-            f.read(16)
-            # Read images
-            data = np.frombuffer(f.read(), dtype=np.uint8)
-            return data.reshape(-1, 28, 28).astype(np.float32) / 255.0
-
-    def _load_mnist_labels(self, filepath):
-        """Load MNIST label file."""
-        with gzip.open(filepath, "rb") as f:
-            # Skip header
-            f.read(8)
-            # Read labels
-            return np.frombuffer(f.read(), dtype=np.uint8).astype(np.int64)
-
 
 def main():
     """Test dataset manager functionality."""
-    print("🧪 Testing TinyTorch Dataset Manager")
+    print(" Testing TinyTorch Dataset Manager")
     print("=" * 50)
 
     manager = DatasetManager()
 
-    # Test each dataset
+    # Test dataset
     print("\n1. Testing Perceptron Data:")
-    X, y = manager.get_perceptron_data(100)
-    print(f"   Shape: X={X.shape}, y={y.shape}")
-
-    print("\n2. Testing XOR Data:")
-    X, y = manager.get_xor_data(100)
-    print(f"   Shape: X={X.shape}, y={y.shape}")
-
-    print("\n3. Testing MNIST (this may take a moment):")
-    try:
-        (train_X, train_y), (test_X, test_y) = manager.get_mnist()
-        print(f"   Shape: train_X={train_X.shape}, test_X={test_X.shape}")
-    except Exception as e:
-        print(f"   MNIST download failed: {e}")
 
     print("\n4. Testing CIFAR-10 (this may take a moment):")
     try:
@@ -345,7 +229,7 @@ def main():
     except Exception as e:
         print(f"   CIFAR-10 download failed: {e}")
 
-    print("\n✅ Dataset Manager test complete!")
+    print("\n Dataset Manager test complete!")
 
 
 if __name__ == "__main__":

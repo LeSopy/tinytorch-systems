@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 
-from tinytorch.foundation.tokenization import CharTokenizer
+from tinytorch.architecture.tokenization import CharTokenizer
 
 
 class TestTokenizerBasics:

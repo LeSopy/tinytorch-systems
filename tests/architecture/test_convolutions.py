@@ -9,7 +9,7 @@ rng = np.random.default_rng(7)
 import pytest
 
 
-from tinytorch.foundation.convolutions import Conv2d, MaxPool2d, AvgPool2d
+from tinytorch.architecture.convolutions import Conv2d, MaxPool2d, AvgPool2d
 from tinytorch.foundation.tensor import Tensor
 from tinytorch.foundation.autograd import enable_autograd
 
