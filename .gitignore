@@ -19,3 +19,7 @@ Thumbs.dbdatasets/
 datasets/
 *.tar.gz
 *.pkl        # only if pkl files are large — keep small ones if needed
+
+# Jupyter
+*.ipynb_checkpoints/
+*.ipynb
