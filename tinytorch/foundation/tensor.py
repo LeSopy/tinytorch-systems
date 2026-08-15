@@ -186,7 +186,6 @@ class Tensor:
     def matmul(self, other):
         """Matrix multiplication of two tensors."""
 
-        ### BEGIN
         self._validate_matmul_shapes(other)
 
         # This is intentionally slower than np.matmul to demonstrate the value of vectorization
@@ -194,7 +193,6 @@ class Tensor:
         a = self.data
         b = other.data
 
-        # Handle 2D matrices with explicit loops (educational)
         if len(a.shape) == 2 and len(b.shape) == 2:
             M, K = a.shape
             K2, N = b.shape
@@ -210,7 +208,6 @@ class Tensor:
             result_data = np.matmul(a, b)
 
         return Tensor(result_data)
-        ### END
 
     def __matmul__(self, other):
         """Enable @ operator for matrix multiplication."""
@@ -238,9 +235,9 @@ class Tensor:
             if new_shape.count(-1) > 1:
                 raise ValueError(
                     f"Cannot reshape {self.shape} with multiple unknown dimensions\n"
-                    f"  ❌ Found {new_shape.count(-1)} dimensions set to -1 in {new_shape}\n"
-                    f"  💡 Only one dimension can be inferred; others must be specified\n"
-                    f"  🔧 Replace all but one -1 with explicit sizes (total elements: {self.size})"
+                    f"   Found {new_shape.count(-1)} dimensions set to -1 in {new_shape}\n"
+                    f"   Only one dimension can be inferred; others must be specified\n"
+                    f"   Replace all but one -1 with explicit sizes (total elements: {self.size})"
                 )
             known_size = 1
             unknown_idx = new_shape.index(-1)
@@ -251,8 +248,8 @@ class Tensor:
                 raise ValueError(
                     f"Cannot infer -1 dimension: {self.size} elements is not "
                     f"divisible by the known dimensions product {known_size}\n"
-                    f"  ❌ {self.size} % {known_size} = {self.size % known_size}\n"
-                    f"  💡 The -1 dimension must be a whole number"
+                    f"   {self.size} % {known_size} = {self.size % known_size}\n"
+                    f"   The -1 dimension must be a whole number"
                 )
             unknown_dim = self.size // known_size
             new_shape = list(new_shape)
