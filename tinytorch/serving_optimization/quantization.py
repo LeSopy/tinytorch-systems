@@ -20,9 +20,9 @@ from typing import Tuple, Dict, List, Optional
 rng = np.random.default_rng(7)
 
 # Import dependancies from other modules
-from ..foundation.tensor import Tensor
-from ..foundation.layers import Linear, Sequential
-from ..foundation.activations import ReLU
+from tinytorch.foundation.tensor import Tensor
+from tinytorch.foundation.layers import Linear, Sequential
+from tinytorch.foundation.activations import ReLU
 
 # Constants for INT8 quantization
 INT8_MIN_VALUE = -128
